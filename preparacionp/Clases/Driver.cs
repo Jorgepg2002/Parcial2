@@ -8,19 +8,20 @@ namespace preparacionp.Clases
 {
     class Driver
     {
-        private int Cedula;
-        private string Sexo;
-        private string Afiliado;
-        private Vehicle Carro = null;
+        private string sexo;
+        private string afiliado;
+        private string cedula;
 
-        Form1 p = new Form1();
-        public Driver(int cedula, string sexo, string afiliado)
+       
+        public string Afiliado { get => afiliado; set => afiliado = value; }
+        public string Sexo { get => sexo; set => sexo = value; }
+        public string Cedula { get => cedula; set => cedula = value; }
+
+        public Driver(string Sexo, string Afiliado, string Cedula)
         {
-            Cedula = cedula;
-            Sexo = sexo;
-            Afiliado = afiliado;
-            Carro = new Vehicle(p.Tipo,p.Placa,p.Marca,p.Dueno);
-
+            sexo = Sexo;
+            afiliado = Afiliado;
+            cedula = Cedula;
         }
     }
 }
