@@ -81,7 +81,22 @@ namespace preparacionp
                 MessageBox.Show("Faltan datos del Vehiculo ");
 
             else if (horaEntrada > 23 || minutosEntrada > 59)
+            {
                 MessageBox.Show("Hora no Valida");
+                txtHorasEntrada.Text = "00";
+                txtMinutosEntrada.Text = "00";
+            }
+                
+            else if (tipo == "Por definir")
+            {
+                cmbTipo.SelectedIndex = 4;
+
+            }
+            else if (afiliado == "Por establecer")
+            {
+                cmbAfiliado.SelectedIndex = 3;
+
+            }
             else if (txtHoraDeSalida.Text != "00" || txtMinutosDeSalida.Text != "00")
             {
                 MessageBox.Show("La hora de salida solo aplica al retirar un carro");
@@ -120,34 +135,55 @@ namespace preparacionp
         }
         private void retirar_Click(object sender, EventArgs e)
         {
-            // eliminar de la bs con la cedula que se busco
+            //eliminar de la bs con la cedula que se busco
             // actualizar en el historia que ya no esta en el parqueadero
 
+            // Buscar si existe el servicio que se queire sacar
+            //buscar cliente
+            FirebaseResponse bucarClienteConCedula = client.Get("ClientesActuales/" + txtCedula.Text);
+            Driver driverC = bucarClienteConCedula.ResultAs<Driver>();
+            FirebaseResponse buscarClienteConPlaca = client.Get("ClientesActuales/" + txtPlaca.Text);
+            Driver driverP = buscarClienteConPlaca.ResultAs<Driver>();
+
+            FirebaseResponse buscarCarrroConCedula = client.Get("Carros en parqueadero/" + txtCedula.Text);
+            Vehicle vehicleC = buscarCarrroConCedula.ResultAs<Vehicle>();
+
+            FirebaseResponse buscarCarroConPlaca = client.Get("Carros en parqueadero/" + txtPlaca.Text);
+            Vehicle vehicleP = buscarCarroConPlaca.ResultAs<Vehicle>();
+
+            if(driverC == null || driverP == null || vehicleC == null || vehicleP == null)
+            {
+                MessageBox.Show("No se encuentra vehiculo a retirar verifique si este vehiculo existe en el apartado buscar");
+            }
+            else
+            {
+                // Retirar cliente
+                FirebaseResponse DriverC = client.Delete("ClientesActuales/" + txtCedula.Text);
+                Driver d = DriverC.ResultAs<Driver>();
+
+                FirebaseResponse DriverP = client.Delete("ClientesActuales/" + txtPlaca.Text);
+                Driver dr = DriverP.ResultAs<Driver>();
+
+                //Retirar Carro
+                FirebaseResponse VehiculoC = client.Delete("Carros en parqueadero/" + txtCedula.Text);
+                Vehicle v = VehiculoC.ResultAs<Vehicle>();
+
+                FirebaseResponse VehiculoP = client.Delete("Carros en parqueadero/" + txtPlaca.Text);
+                Vehicle ve = VehiculoP.ResultAs<Vehicle>();
+
+                MessageBox.Show("Carro retirado");
+
+            }
 
 
-            asignarVariables();
 
-            if (txtCedula.Text == "" || Convert.ToString(cmbSexo.SelectedItem) == "" || Convert.ToString(cmbAfiliado.SelectedItem) == "")
 
-                MessageBox.Show("Faltan datos del Conductor");
 
-            else if (txtPlaca.Text == "" || Convert.ToString(cmbTipo.SelectedItem) == "" || txtMarca.Text == "")
-
-                MessageBox.Show("Faltan datos del Vehiculo ");
-
-            if (horaEntrada > 23 || minutosEntrada > 59 || horaSalida > 23 || minutosSalida > 59)
-                MessageBox.Show("Hora no Valida");
-            if (horaSalida == 00 || minutosSalida == 00)
-                MessageBox.Show("Ingrese la hora de salida para retirar el vehiculo");
-
-            
-            Vehicle v = CrearVehiculo();
-            Driver d = CrearDriver();
             //actualizar la historia donde se encuentra el cliento, donde ahora el carro tenga como estado retirado
             //client.Update("Historia/" + cedula, v);
             // cliente.update("Historia/" + cedula, d);
 
-            // Eliminar vehiculo de parqueadero
+           
         }
         private Vehicle CrearVehiculo()
         {
@@ -203,7 +239,10 @@ namespace preparacionp
             horaSalida = int.Parse(txtHoraDeSalida.Text);
             minutosSalida = int.Parse(txtMinutosDeSalida.Text);
         }
+        private void buscar()
+        {
 
+        }
         private void btnBuscar_Click(object sender, EventArgs e)
         {
             FirebaseResponse response = client.Get("ClientesActuales/" + txtBuscar.Text);
@@ -236,7 +275,7 @@ namespace preparacionp
             }
             else
             {
-                MessageBox.Show("No hay resultados");
+                MessageBox.Show("No se encontro cliente");
             }
 
             if (v != null)
@@ -261,7 +300,7 @@ namespace preparacionp
             }
             else
             {
-                MessageBox.Show("No hay resultados");
+                MessageBox.Show("No se encontro vehiculo");
             }
         }   
 
