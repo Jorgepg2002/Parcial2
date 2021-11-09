@@ -11,11 +11,12 @@ namespace preparacionp.Clases
         private string sexo;
         private string afiliado;
         private string cedula;
-
+        private double montoPagado;
        
         public string Afiliado { get => afiliado; set => afiliado = value; }
         public string Sexo { get => sexo; set => sexo = value; }
         public string Cedula { get => cedula; set => cedula = value; }
+        public double MontoPagado { get => montoPagado; set => montoPagado = value; }
 
         public Driver(string Sexo, string Afiliado, string Cedula)
         {

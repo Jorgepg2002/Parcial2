@@ -58,6 +58,7 @@ namespace preparacionp
             this.btnBuscar = new System.Windows.Forms.Button();
             this.txtBuscar = new System.Windows.Forms.TextBox();
             this.lblBuscar = new System.Windows.Forms.Label();
+            this.lblHoras = new System.Windows.Forms.Label();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -87,7 +88,7 @@ namespace preparacionp
             // 
             // btnIngresar
             // 
-            this.btnIngresar.Location = new System.Drawing.Point(467, 550);
+            this.btnIngresar.Location = new System.Drawing.Point(341, 336);
             this.btnIngresar.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.btnIngresar.Name = "btnIngresar";
             this.btnIngresar.Size = new System.Drawing.Size(94, 26);
@@ -98,7 +99,7 @@ namespace preparacionp
             // 
             // retirar
             // 
-            this.retirar.Location = new System.Drawing.Point(665, 550);
+            this.retirar.Location = new System.Drawing.Point(539, 336);
             this.retirar.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.retirar.Name = "retirar";
             this.retirar.Size = new System.Drawing.Size(94, 26);
@@ -130,10 +131,13 @@ namespace preparacionp
             // panel1
             // 
             this.panel1.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.panel1.Controls.Add(this.lblHoras);
             this.panel1.Controls.Add(this.cmbTipo);
             this.panel1.Controls.Add(this.lblComentario);
             this.panel1.Controls.Add(this.lblVehiculo);
+            this.panel1.Controls.Add(this.retirar);
             this.panel1.Controls.Add(this.txtHorasEntrada);
+            this.panel1.Controls.Add(this.btnIngresar);
             this.panel1.Controls.Add(this.txtMinutosEntrada);
             this.panel1.Controls.Add(this.txtMarca);
             this.panel1.Controls.Add(this.txtdospuntos);
@@ -156,7 +160,7 @@ namespace preparacionp
             this.panel1.Location = new System.Drawing.Point(157, 157);
             this.panel1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(929, 324);
+            this.panel1.Size = new System.Drawing.Size(929, 388);
             this.panel1.TabIndex = 11;
             // 
             // cmbTipo
@@ -386,6 +390,17 @@ namespace preparacionp
             this.lblBuscar.TabIndex = 22;
             this.lblBuscar.Text = "Buscar";
             // 
+            // lblHoras
+            // 
+            this.lblHoras.AutoSize = true;
+            this.lblHoras.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblHoras.Location = new System.Drawing.Point(115, 294);
+            this.lblHoras.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.lblHoras.Name = "lblHoras";
+            this.lblHoras.Size = new System.Drawing.Size(98, 17);
+            this.lblHoras.TabIndex = 36;
+            this.lblHoras.Text = "*Formato 24h*";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(10F, 18F);
@@ -396,8 +411,6 @@ namespace preparacionp
             this.Controls.Add(this.txtBuscar);
             this.Controls.Add(this.btnBuscar);
             this.Controls.Add(this.panel1);
-            this.Controls.Add(this.retirar);
-            this.Controls.Add(this.btnIngresar);
             this.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Margin = new System.Windows.Forms.Padding(5, 4, 5, 4);
             this.Name = "Form1";
@@ -439,6 +452,7 @@ namespace preparacionp
         private System.Windows.Forms.Label lblHoraEntrada;
         private System.Windows.Forms.Label lblComentario;
         private System.Windows.Forms.ComboBox cmbTipo;
+        private System.Windows.Forms.Label lblHoras;
     }
 }
 

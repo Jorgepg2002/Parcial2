@@ -23,7 +23,7 @@ namespace preparacionp
 
         };
         IFirebaseClient client;
-        /*Datos temporales los cuales se usaran para ser asignados a las clases */
+        /*variables para asignar datos de pantalla a las clases o viceversa  */
         private string tipo = "";
         private string placa = "";
         private string marca = "";
@@ -34,6 +34,7 @@ namespace preparacionp
         private int minutosEntrada;
         private int minutosSalida;
         private int horaSalida;
+        private double precio;
 
         public string Tipo { get => tipo; set => tipo = value; }
         public string Placa { get => placa; set => placa = value; }
@@ -89,12 +90,12 @@ namespace preparacionp
                 
             else if (tipo == "Por definir")
             {
-                cmbTipo.SelectedIndex = 4;
+                cmbTipo.SelectedIndex = 3;
 
             }
             else if (afiliado == "Por establecer")
             {
-                cmbAfiliado.SelectedIndex = 3;
+                cmbAfiliado.SelectedIndex = 2;
 
             }
             else if (txtHoraDeSalida.Text != "00" || txtMinutosDeSalida.Text != "00")
@@ -107,13 +108,14 @@ namespace preparacionp
             {
 
                 Driver d = CrearDriver();
+                
 
                 Vehicle v = CrearVehiculo();
-
+                v.Estado = "En Parqueadero";
                 parqueadero.AgregarCarro(v);
 
-                client.Set("Historia/" + cedula, d);
-                client.Update("Historia/" + cedula, v);
+                client.Set("Historia/" + Placa, d);
+                client.Update("Historia/" + Placa, v);
 
 
                 client.Set("ClientesActuales/" + cedula, d);
@@ -139,65 +141,89 @@ namespace preparacionp
             // actualizar en el historia que ya no esta en el parqueadero
 
             // Buscar si existe el servicio que se queire sacar
-            //buscar cliente
+            //buscar Conductor
             FirebaseResponse bucarClienteConCedula = client.Get("ClientesActuales/" + txtCedula.Text);
             Driver driverC = bucarClienteConCedula.ResultAs<Driver>();
             FirebaseResponse buscarClienteConPlaca = client.Get("ClientesActuales/" + txtPlaca.Text);
             Driver driverP = buscarClienteConPlaca.ResultAs<Driver>();
 
+            //buscar Vehiculo
             FirebaseResponse buscarCarrroConCedula = client.Get("Carros en parqueadero/" + txtCedula.Text);
             Vehicle vehicleC = buscarCarrroConCedula.ResultAs<Vehicle>();
-
             FirebaseResponse buscarCarroConPlaca = client.Get("Carros en parqueadero/" + txtPlaca.Text);
             Vehicle vehicleP = buscarCarroConPlaca.ResultAs<Vehicle>();
 
-            if(driverC == null || driverP == null || vehicleC == null || vehicleP == null)
+          
+            if (driverC == null || driverP == null || vehicleC == null || vehicleP == null)
             {
                 MessageBox.Show("No se encuentra vehiculo a retirar verifique si este vehiculo existe en el apartado buscar");
             }
             else
             {
-                // Retirar cliente
-                FirebaseResponse DriverC = client.Delete("ClientesActuales/" + txtCedula.Text);
-                Driver d = DriverC.ResultAs<Driver>();
+                parqueadero.EliminarCarrro(vehicleP);
+                if (int.Parse(txtHoraDeSalida.Text) > 23 || int.Parse(txtMinutosDeSalida.Text) > 59)
+                {
+                    MessageBox.Show("Hora no Valida");
+                    txtHoraDeSalida.Text = "00";
+                    txtMinutosDeSalida.Text = "00";
+                }
+                else
+                {
+                    asignarVariables();
+                    vehicleP.Estado = "Retirado";
+                    vehicleP.HoraSalida = horaSalida;
+                    vehicleP.MinutosSalida = minutosSalida;
+                    client.Update("Historia/" + Placa, driverP);
+                    client.Update("Historia/" + Placa, vehicleP);
+                    //hora
 
-                FirebaseResponse DriverP = client.Delete("ClientesActuales/" + txtPlaca.Text);
-                Driver dr = DriverP.ResultAs<Driver>();
 
-                //Retirar Carro
-                FirebaseResponse VehiculoC = client.Delete("Carros en parqueadero/" + txtCedula.Text);
-                Vehicle v = VehiculoC.ResultAs<Vehicle>();
 
-                FirebaseResponse VehiculoP = client.Delete("Carros en parqueadero/" + txtPlaca.Text);
-                Vehicle ve = VehiculoP.ResultAs<Vehicle>();
+                    // Retirar cliente
+                    FirebaseResponse DriverC = client.Delete("ClientesActuales/" + txtCedula.Text);
+                    Driver d = DriverC.ResultAs<Driver>();
 
-                MessageBox.Show("Carro retirado");
+                    FirebaseResponse DriverP = client.Delete("ClientesActuales/" + txtPlaca.Text);
+                    Driver dr = DriverP.ResultAs<Driver>();
+
+                    //Retirar Carro
+
+
+                    FirebaseResponse VehiculoC = client.Delete("Carros en parqueadero/" + txtCedula.Text);
+                    Vehicle v = VehiculoC.ResultAs<Vehicle>();
+
+                    FirebaseResponse VehiculoP = client.Delete("Carros en parqueadero/" + txtPlaca.Text);
+                    Vehicle ve = VehiculoP.ResultAs<Vehicle>();
+
+                    double TotalPagar = calculaPrecio();
+
+                    driverP.MontoPagado = TotalPagar;
+
+                    
+                    client.Update("Historia/" + Placa, driverP);
+                
+                    MessageBox.Show("Carro retirado \n total a pagar: \n" + TotalPagar);
+
+                    limpiar();
+
+                }
+                
 
             }
 
 
 
 
-
+            
             //actualizar la historia donde se encuentra el cliento, donde ahora el carro tenga como estado retirado
             //client.Update("Historia/" + cedula, v);
             // cliente.update("Historia/" + cedula, d);
 
-           
+
         }
         private Vehicle CrearVehiculo()
         {
             Vehicle v = new Vehicle(tipo, placa, marca, horaEntrada, minutosEntrada, horaSalida, minutosSalida);
-
-            if (v.MinutosSalida == 00)
-            {
-                v.Estado = "En el parqueadero";
-
-            }
-            else
-            {
-                v.Estado = " Retirado";
-            }
             
             return v;
 
@@ -215,12 +241,17 @@ namespace preparacionp
             cmbAfiliado.SelectedIndex = 0;
             cmbSexo.SelectedIndex= 0;
             cmbTipo.SelectedIndex = 0;
+            txtHoraDeSalida.Text = "";
+            txtMinutosDeSalida.Text = "";
+            txtHorasEntrada.Text = "";
+            txtMinutosEntrada.Text = "";
+
 
 
 
         }
 
-     
+
 
 
         private void asignarVariables()
@@ -234,15 +265,43 @@ namespace preparacionp
             afiliado = Convert.ToString(cmbAfiliado.SelectedItem);
             sexo = Convert.ToString(cmbSexo.SelectedItem);
 
-            horaEntrada = int.Parse(txtHorasEntrada.Text);
-            minutosEntrada = int.Parse(txtMinutosEntrada.Text);
-            horaSalida = int.Parse(txtHoraDeSalida.Text);
-            minutosSalida = int.Parse(txtMinutosDeSalida.Text);
-        }
-        private void buscar()
-        {
 
+            if (txtHoraDeSalida.Text == "")
+            {
+                txtHoraDeSalida.Text = "00";
+
+                horaSalida = int.Parse(txtHoraDeSalida.Text);
+
+            }
+            else if (txtHorasEntrada.Text == "")
+            {
+                txtHorasEntrada.Text = "00";
+
+                horaEntrada = int.Parse(txtHorasEntrada.Text);
+
+            }
+            else if(txtMinutosDeSalida.Text == "")
+            {
+                txtMinutosDeSalida.Text = "00";
+                minutosSalida = int.Parse(txtMinutosDeSalida.Text);
+            }
+            else if(txtMinutosEntrada.Text == "")
+            {
+                txtMinutosEntrada.Text = "00";
+
+                minutosEntrada= int.Parse(txtMinutosEntrada.Text);
+
+            }
+            else
+            {
+                horaEntrada = int.Parse(txtHorasEntrada.Text);
+                minutosEntrada = int.Parse(txtMinutosEntrada.Text);
+                horaSalida = int.Parse(txtHoraDeSalida.Text);
+                minutosSalida = int.Parse(txtMinutosDeSalida.Text);
+            }
+          
         }
+     
         private void btnBuscar_Click(object sender, EventArgs e)
         {
             FirebaseResponse response = client.Get("ClientesActuales/" + txtBuscar.Text);
@@ -282,6 +341,10 @@ namespace preparacionp
             {
                 txtPlaca.Text = v.Placa;
                 txtMarca.Text = v.Marca;
+                txtHorasEntrada.Text = Convert.ToString(v.HoraEntrada);
+                txtMinutosEntrada.Text = Convert.ToString(v.MinutosEntrada);
+                txtMinutosDeSalida.Text = Convert.ToString(v.MinutosSalida);
+                txtHoraDeSalida.Text = Convert.ToString(v.HoraSalida);
                 if (v.Tipo == "Camioneta")
                 {
                     cmbTipo.SelectedIndex = 1;
@@ -305,17 +368,34 @@ namespace preparacionp
         }   
 
 
+        private double calculaPrecio()
+        {
+            double MinutosEntrada = double.Parse(txtMinutosEntrada.Text) + double.Parse(txtHorasEntrada.Text)*60;
+            double MinutosSalida = double.Parse(txtMinutosDeSalida.Text) + double.Parse(txtHoraDeSalida.Text)* 60;
 
-        //public void mostrarCliente()
-        //{
-        //    // c sera el carro que se busco con el metodo 
-        //    foreach (Driver c in parqueadero.CarrosEnParqueadero)
-        //    {
-        //        // prueba.Text = c.Cedula ;              
-        //        c.Cedula = txtMarca.Text;
-        //    }
+            
+            if (MinutosEntrada < MinutosSalida)
+            {
+                
+                double entradaMenor = (MinutosSalida - MinutosEntrada) * 50;
+                precio = entradaMenor;
+            }
+            else if(MinutosEntrada > MinutosSalida)
+            {
+                double entradaMayor = (1440 - MinutosEntrada + MinutosSalida)*50;
+                precio = entradaMayor;
+            }
 
-        //}
+            if (tipo == "Camioneta")
+                precio = precio + (precio * 0.20);
+            else if (tipo == "Microbus")
+                precio = precio + (precio * 0.20);
+
+            if (afiliado == "SI")
+                precio = precio - (precio * 0.10);
+
+            return precio;
+        }
 
 
     }
