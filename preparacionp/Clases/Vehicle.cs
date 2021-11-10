@@ -16,6 +16,8 @@ namespace preparacionp.Clases
         private int horaSalida;
         private int minutosSalida;
         private string estado;
+     
+
         public int HoraEntrada { get => horaEntrada; set => horaEntrada = value; }
         public int MinutosEntrada { get => minutosEntrada; set => minutosEntrada = value; }
         public int MinutosSalida { get => minutosSalida; set => minutosSalida = value; }

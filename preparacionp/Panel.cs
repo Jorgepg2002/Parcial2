@@ -81,12 +81,7 @@ namespace preparacionp
 
                 MessageBox.Show("Faltan datos del Vehiculo ");
 
-            else if (horaEntrada > 23 || minutosEntrada > 59)
-            {
-                MessageBox.Show("Hora no Valida");
-                txtHorasEntrada.Text = "00";
-                txtMinutosEntrada.Text = "00";
-            }
+            
                 
             else if (tipo == "Por definir")
             {
@@ -98,12 +93,7 @@ namespace preparacionp
                 cmbAfiliado.SelectedIndex = 2;
 
             }
-            else if (txtHoraDeSalida.Text != "00" || txtMinutosDeSalida.Text != "00")
-            {
-                MessageBox.Show("La hora de salida solo aplica al retirar un carro");
-                txtHoraDeSalida.Text = "00";
-                txtMinutosDeSalida.Text = "00";
-            }
+            
             else
             {
 
@@ -114,8 +104,9 @@ namespace preparacionp
                 v.Estado = "En Parqueadero";
                 parqueadero.AgregarCarro(v);
 
-                client.Set("Historia/" + Placa, d);
-                client.Update("Historia/" + Placa, v);
+                client.Set("Historia del dia " + lblFecha.Text + "/" + "hora a la que entro el carro: " + v.HoraEntrada + "/" + v.Placa, d);
+                client.Update("Historia del dia " + lblFecha.Text + "/" + "hora a la que entro el carro: " + v.HoraEntrada + "/" + v.Placa, v);
+
 
 
                 client.Set("ClientesActuales/" + cedula, d);
@@ -137,10 +128,9 @@ namespace preparacionp
         }
         private void retirar_Click(object sender, EventArgs e)
         {
-            //eliminar de la bs con la cedula que se busco
-            // actualizar en el historia que ya no esta en el parqueadero
-
-            // Buscar si existe el servicio que se queire sacar
+            /* Postdata
+             tuvo que haber un metodo buscar
+             */
             //buscar Conductor
             FirebaseResponse bucarClienteConCedula = client.Get("ClientesActuales/" + txtCedula.Text);
             Driver driverC = bucarClienteConCedula.ResultAs<Driver>();
@@ -160,54 +150,44 @@ namespace preparacionp
             }
             else
             {
-                parqueadero.EliminarCarrro(vehicleP);
-                if (int.Parse(txtHoraDeSalida.Text) > 23 || int.Parse(txtMinutosDeSalida.Text) > 59)
-                {
-                    MessageBox.Show("Hora no Valida");
-                    txtHoraDeSalida.Text = "00";
-                    txtMinutosDeSalida.Text = "00";
-                }
-                else
-                {
-                    asignarVariables();
-                    vehicleP.Estado = "Retirado";
-                    vehicleP.HoraSalida = horaSalida;
-                    vehicleP.MinutosSalida = minutosSalida;
-                    client.Update("Historia/" + Placa, driverP);
-                    client.Update("Historia/" + Placa, vehicleP);
-                    //hora
+                asignarVariables();
+                vehicleP.Estado = "Retirado";
+                vehicleP.HoraSalida = int.Parse(txtHoraDeSalida.Text);
+                vehicleP.MinutosSalida = int.Parse(txtMinutosDeSalida.Text);
+
+                //hora
 
 
 
-                    // Retirar cliente
-                    FirebaseResponse DriverC = client.Delete("ClientesActuales/" + txtCedula.Text);
-                    Driver d = DriverC.ResultAs<Driver>();
+                // Retirar cliente
+                FirebaseResponse DriverC = client.Delete("ClientesActuales/" + txtCedula.Text);
+                Driver d = DriverC.ResultAs<Driver>();
 
-                    FirebaseResponse DriverP = client.Delete("ClientesActuales/" + txtPlaca.Text);
-                    Driver dr = DriverP.ResultAs<Driver>();
+                FirebaseResponse DriverP = client.Delete("ClientesActuales/" + txtPlaca.Text);
+                Driver dr = DriverP.ResultAs<Driver>();
 
-                    //Retirar Carro
+                //Retirar Carro
 
 
-                    FirebaseResponse VehiculoC = client.Delete("Carros en parqueadero/" + txtCedula.Text);
-                    Vehicle v = VehiculoC.ResultAs<Vehicle>();
+                FirebaseResponse VehiculoC = client.Delete("Carros en parqueadero/" + txtCedula.Text);
+                Vehicle v = VehiculoC.ResultAs<Vehicle>();
 
-                    FirebaseResponse VehiculoP = client.Delete("Carros en parqueadero/" + txtPlaca.Text);
-                    Vehicle ve = VehiculoP.ResultAs<Vehicle>();
+                FirebaseResponse VehiculoP = client.Delete("Carros en parqueadero/" + txtPlaca.Text);
+                Vehicle ve = VehiculoP.ResultAs<Vehicle>();
 
-                    double TotalPagar = calculaPrecio();
+                double TotalPagar = calculaPrecio();
 
-                    driverP.MontoPagado = TotalPagar;
+                driverP.MontoPagado = TotalPagar;
 
-                    
-                    client.Update("Historia/" + Placa, driverP);
-                
-                    MessageBox.Show("Carro retirado \n total a pagar: \n" + TotalPagar);
+                client.Update("Historia del dia " + lblFecha.Text + "/" + "hora a la que entro el carro: " + v.HoraEntrada + "/" + v.Placa, d);
+                client.Update("Historia del dia " + lblFecha.Text + "/" + "hora a la que entro el carro: " + v.HoraEntrada + "/" + v.Placa, v);
 
-                    limpiar();
 
-                }
-                
+
+                MessageBox.Show("Carro retirado \n total a pagar: \n" + TotalPagar);
+
+                limpiar();
+
 
             }
 
@@ -245,6 +225,8 @@ namespace preparacionp
             txtMinutosDeSalida.Text = "";
             txtHorasEntrada.Text = "";
             txtMinutosEntrada.Text = "";
+            txth.Text = "";
+            txtm.Text = "";
 
 
 
@@ -256,7 +238,7 @@ namespace preparacionp
 
         private void asignarVariables()
         {
-
+            // se implemento antes del timer, pendiente por eliminar codigo basurar.
             // Valors de pantalla en variables.
             tipo = Convert.ToString(cmbTipo.SelectedItem);
             placa = txtPlaca.Text;
@@ -341,10 +323,10 @@ namespace preparacionp
             {
                 txtPlaca.Text = v.Placa;
                 txtMarca.Text = v.Marca;
-                txtHorasEntrada.Text = Convert.ToString(v.HoraEntrada);
-                txtMinutosEntrada.Text = Convert.ToString(v.MinutosEntrada);
-                txtMinutosDeSalida.Text = Convert.ToString(v.MinutosSalida);
-                txtHoraDeSalida.Text = Convert.ToString(v.HoraSalida);
+                txth.Text = Convert.ToString(v.HoraEntrada);
+                txtm.Text = Convert.ToString(v.MinutosEntrada);
+                txtMinutosDeSalida.Text = Convert.ToString(minutosEntrada);
+                txtHoraDeSalida.Text = Convert.ToString(horaEntrada);
                 if (v.Tipo == "Camioneta")
                 {
                     cmbTipo.SelectedIndex = 1;
@@ -370,7 +352,7 @@ namespace preparacionp
 
         private double calculaPrecio()
         {
-            double MinutosEntrada = double.Parse(txtMinutosEntrada.Text) + double.Parse(txtHorasEntrada.Text)*60;
+            double MinutosEntrada = double.Parse(txtm.Text) + double.Parse(txth.Text)*60;
             double MinutosSalida = double.Parse(txtMinutosDeSalida.Text) + double.Parse(txtHoraDeSalida.Text)* 60;
 
             
@@ -389,7 +371,8 @@ namespace preparacionp
             if (tipo == "Camioneta")
                 precio = precio + (precio * 0.20);
             else if (tipo == "Microbus")
-                precio = precio + (precio * 0.20);
+                precio = precio + 
+                    (precio * 0.20);
 
             if (afiliado == "SI")
                 precio = precio - (precio * 0.10);
@@ -397,7 +380,25 @@ namespace preparacionp
             return precio;
         }
 
+        private void tiempo_Tick(object sender, EventArgs e)
+        {
+            horaEntrada = int.Parse(DateTime.Now.ToString("HH"));
+            minutosEntrada = int.Parse(DateTime.Now.ToString("mm"));
 
+            txtHorasEntrada.Text = Convert.ToString(horaEntrada);
+            txtMinutosEntrada.Text = Convert.ToString(minutosEntrada);
+
+            lblFecha.Text = DateTime.Now.ToLongDateString();
+
+        }
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            this.tiempo.Enabled = true;
+            
+        }
+
+
+       
     }
     
 }

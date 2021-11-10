@@ -29,6 +29,7 @@ namespace preparacionp
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.txtMarca = new System.Windows.Forms.TextBox();
             this.txtPlaca = new System.Windows.Forms.TextBox();
             this.txtCedula = new System.Windows.Forms.TextBox();
@@ -37,6 +38,11 @@ namespace preparacionp
             this.lblVehiculo = new System.Windows.Forms.Label();
             this.lblConductor = new System.Windows.Forms.Label();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.lblHoraconductorBuscado = new System.Windows.Forms.Label();
+            this.txth = new System.Windows.Forms.TextBox();
+            this.txtm = new System.Windows.Forms.TextBox();
+            this.textBox4 = new System.Windows.Forms.TextBox();
+            this.lblHoras = new System.Windows.Forms.Label();
             this.cmbTipo = new System.Windows.Forms.ComboBox();
             this.lblComentario = new System.Windows.Forms.Label();
             this.txtHorasEntrada = new System.Windows.Forms.TextBox();
@@ -58,7 +64,8 @@ namespace preparacionp
             this.btnBuscar = new System.Windows.Forms.Button();
             this.txtBuscar = new System.Windows.Forms.TextBox();
             this.lblBuscar = new System.Windows.Forms.Label();
-            this.lblHoras = new System.Windows.Forms.Label();
+            this.tiempo = new System.Windows.Forms.Timer(this.components);
+            this.lblFecha = new System.Windows.Forms.Label();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -88,7 +95,7 @@ namespace preparacionp
             // 
             // btnIngresar
             // 
-            this.btnIngresar.Location = new System.Drawing.Point(341, 336);
+            this.btnIngresar.Location = new System.Drawing.Point(351, 372);
             this.btnIngresar.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.btnIngresar.Name = "btnIngresar";
             this.btnIngresar.Size = new System.Drawing.Size(94, 26);
@@ -99,12 +106,12 @@ namespace preparacionp
             // 
             // retirar
             // 
-            this.retirar.Location = new System.Drawing.Point(539, 336);
+            this.retirar.Location = new System.Drawing.Point(549, 372);
             this.retirar.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.retirar.Name = "retirar";
             this.retirar.Size = new System.Drawing.Size(94, 26);
             this.retirar.TabIndex = 8;
-            this.retirar.Text = "Retirar";
+            this.retirar.Text = "Facturar";
             this.retirar.UseVisualStyleBackColor = true;
             this.retirar.Click += new System.EventHandler(this.retirar_Click);
             // 
@@ -131,6 +138,10 @@ namespace preparacionp
             // panel1
             // 
             this.panel1.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.panel1.Controls.Add(this.lblHoraconductorBuscado);
+            this.panel1.Controls.Add(this.txth);
+            this.panel1.Controls.Add(this.txtm);
+            this.panel1.Controls.Add(this.textBox4);
             this.panel1.Controls.Add(this.lblHoras);
             this.panel1.Controls.Add(this.cmbTipo);
             this.panel1.Controls.Add(this.lblComentario);
@@ -160,8 +171,63 @@ namespace preparacionp
             this.panel1.Location = new System.Drawing.Point(157, 157);
             this.panel1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(929, 388);
+            this.panel1.Size = new System.Drawing.Size(929, 415);
             this.panel1.TabIndex = 11;
+            // 
+            // lblHoraconductorBuscado
+            // 
+            this.lblHoraconductorBuscado.AutoSize = true;
+            this.lblHoraconductorBuscado.Location = new System.Drawing.Point(50, 329);
+            this.lblHoraconductorBuscado.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.lblHoraconductorBuscado.Name = "lblHoraconductorBuscado";
+            this.lblHoraconductorBuscado.Size = new System.Drawing.Size(239, 18);
+            this.lblHoraconductorBuscado.TabIndex = 40;
+            this.lblHoraconductorBuscado.Text = "Hora llegada vehiculo buscado";
+            // 
+            // txth
+            // 
+            this.txth.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txth.Location = new System.Drawing.Point(136, 350);
+            this.txth.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.txth.Name = "txth";
+            this.txth.ReadOnly = true;
+            this.txth.Size = new System.Drawing.Size(31, 27);
+            this.txth.TabIndex = 37;
+            this.txth.Text = "00";
+            // 
+            // txtm
+            // 
+            this.txtm.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtm.Location = new System.Drawing.Point(174, 350);
+            this.txtm.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.txtm.Name = "txtm";
+            this.txtm.ReadOnly = true;
+            this.txtm.Size = new System.Drawing.Size(31, 27);
+            this.txtm.TabIndex = 38;
+            this.txtm.Text = "00";
+            // 
+            // textBox4
+            // 
+            this.textBox4.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.textBox4.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.textBox4.Location = new System.Drawing.Point(165, 350);
+            this.textBox4.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.textBox4.Name = "textBox4";
+            this.textBox4.ReadOnly = true;
+            this.textBox4.Size = new System.Drawing.Size(12, 27);
+            this.textBox4.TabIndex = 39;
+            this.textBox4.Text = ":";
+            // 
+            // lblHoras
+            // 
+            this.lblHoras.AutoSize = true;
+            this.lblHoras.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblHoras.Location = new System.Drawing.Point(115, 294);
+            this.lblHoras.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.lblHoras.Name = "lblHoras";
+            this.lblHoras.Size = new System.Drawing.Size(98, 17);
+            this.lblHoras.TabIndex = 36;
+            this.lblHoras.Text = "*Formato 24h*";
             // 
             // cmbTipo
             // 
@@ -194,6 +260,7 @@ namespace preparacionp
             this.txtHorasEntrada.Location = new System.Drawing.Point(213, 264);
             this.txtHorasEntrada.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.txtHorasEntrada.Name = "txtHorasEntrada";
+            this.txtHorasEntrada.ReadOnly = true;
             this.txtHorasEntrada.Size = new System.Drawing.Size(30, 27);
             this.txtHorasEntrada.TabIndex = 23;
             this.txtHorasEntrada.Text = "00";
@@ -204,6 +271,7 @@ namespace preparacionp
             this.txtMinutosEntrada.Location = new System.Drawing.Point(251, 264);
             this.txtMinutosEntrada.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.txtMinutosEntrada.Name = "txtMinutosEntrada";
+            this.txtMinutosEntrada.ReadOnly = true;
             this.txtMinutosEntrada.Size = new System.Drawing.Size(30, 27);
             this.txtMinutosEntrada.TabIndex = 24;
             this.txtMinutosEntrada.Text = "00";
@@ -226,9 +294,9 @@ namespace preparacionp
             this.lblHoraEntrada.Location = new System.Drawing.Point(50, 268);
             this.lblHoraEntrada.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblHoraEntrada.Name = "lblHoraEntrada";
-            this.lblHoraEntrada.Size = new System.Drawing.Size(129, 18);
+            this.lblHoraEntrada.Size = new System.Drawing.Size(95, 18);
             this.lblHoraEntrada.TabIndex = 33;
-            this.lblHoraEntrada.Text = "Hora de entrada";
+            this.lblHoraEntrada.Text = "Hora actual";
             // 
             // lblHoraSalida
             // 
@@ -268,6 +336,7 @@ namespace preparacionp
             this.txtMinutosDeSalida.Location = new System.Drawing.Point(741, 259);
             this.txtMinutosDeSalida.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.txtMinutosDeSalida.Name = "txtMinutosDeSalida";
+            this.txtMinutosDeSalida.ReadOnly = true;
             this.txtMinutosDeSalida.Size = new System.Drawing.Size(27, 27);
             this.txtMinutosDeSalida.TabIndex = 30;
             this.txtMinutosDeSalida.Text = "00";
@@ -288,6 +357,7 @@ namespace preparacionp
             this.txtHoraDeSalida.Location = new System.Drawing.Point(704, 259);
             this.txtHoraDeSalida.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.txtHoraDeSalida.Name = "txtHoraDeSalida";
+            this.txtHoraDeSalida.ReadOnly = true;
             this.txtHoraDeSalida.Size = new System.Drawing.Size(29, 27);
             this.txtHoraDeSalida.TabIndex = 29;
             this.txtHoraDeSalida.Text = "00";
@@ -390,16 +460,19 @@ namespace preparacionp
             this.lblBuscar.TabIndex = 22;
             this.lblBuscar.Text = "Buscar";
             // 
-            // lblHoras
+            // tiempo
             // 
-            this.lblHoras.AutoSize = true;
-            this.lblHoras.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblHoras.Location = new System.Drawing.Point(115, 294);
-            this.lblHoras.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.lblHoras.Name = "lblHoras";
-            this.lblHoras.Size = new System.Drawing.Size(98, 17);
-            this.lblHoras.TabIndex = 36;
-            this.lblHoras.Text = "*Formato 24h*";
+            this.tiempo.Interval = 10;
+            this.tiempo.Tick += new System.EventHandler(this.tiempo_Tick);
+            // 
+            // lblFecha
+            // 
+            this.lblFecha.AutoSize = true;
+            this.lblFecha.Location = new System.Drawing.Point(376, 595);
+            this.lblFecha.Name = "lblFecha";
+            this.lblFecha.Size = new System.Drawing.Size(54, 18);
+            this.lblFecha.TabIndex = 23;
+            this.lblFecha.Text = "Fecha";
             // 
             // Form1
             // 
@@ -407,6 +480,7 @@ namespace preparacionp
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.Firebrick;
             this.ClientSize = new System.Drawing.Size(1334, 623);
+            this.Controls.Add(this.lblFecha);
             this.Controls.Add(this.lblBuscar);
             this.Controls.Add(this.txtBuscar);
             this.Controls.Add(this.btnBuscar);
@@ -415,6 +489,7 @@ namespace preparacionp
             this.Margin = new System.Windows.Forms.Padding(5, 4, 5, 4);
             this.Name = "Form1";
             this.Text = "Ingresos/Retiros";
+            this.Load += new System.EventHandler(this.Form1_Load);
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
             this.ResumeLayout(false);
@@ -453,6 +528,12 @@ namespace preparacionp
         private System.Windows.Forms.Label lblComentario;
         private System.Windows.Forms.ComboBox cmbTipo;
         private System.Windows.Forms.Label lblHoras;
+        private System.Windows.Forms.Timer tiempo;
+        private System.Windows.Forms.TextBox txth;
+        private System.Windows.Forms.TextBox txtm;
+        private System.Windows.Forms.TextBox textBox4;
+        private System.Windows.Forms.Label lblHoraconductorBuscado;
+        private System.Windows.Forms.Label lblFecha;
     }
 }
 
